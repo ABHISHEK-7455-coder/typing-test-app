@@ -4,6 +4,7 @@ const showText = document.querySelector('.show-text');
 const score = document.querySelector('.section1')
 const time = document.querySelector('.time');
 const wpm = document.querySelector('.wpm');
+const mistake = document.querySelector('.mistake');
 
 
 const sentences = [
@@ -18,6 +19,19 @@ const sentences = [
                      "Keep your friends close, but your enemies closer.",
                 ];
 
+const countMistakes = (originalText, typedText) => {
+  let originalWords = originalText.split(" ");
+  let typedWords = typedText.split(" ");
+  let mistakes = 0;
+
+  for (let i = 0; i < Math.max(originalWords.length, typedWords.length); i++) {
+    if(originalWords[i] !== typedWords[i]) {
+      mistakes++;
+    }
+  }
+  return mistakes;
+}
+
 const typingSpeed = (timeTaken) => {
     let totalWords = typingText.value.trim();
     let actualWords = totalWords === '' ? 0 : totalWords.split(" ").length;
@@ -25,10 +39,13 @@ const typingSpeed = (timeTaken) => {
     if(actualWords !== 0) {
         let speed = (actualWords / timeTaken) * 60;
         speed = Math.round(speed)
-        // console.log(speed)
-        score.innerHTML = `<p class="time">Time : ${totalTimeTaken} sec</p>
-                            <p class="wpm">WPM : ${speed}</p>
-                            <p class="mistake">Mistakes</p>`;
+        
+      let originalText = showText.innerHTML;
+      let mistakes = countMistakes(originalText, totalWords)
+
+        score.innerHTML = `<p class="time">Time:${totalTimeTaken} sec</p>
+                            <p class="wpm">WPM:${speed}</p>
+                            <p class="mistake">Mistakes:${mistakes}</p>`;
     }
 }
 
@@ -39,7 +56,7 @@ const endTyping = () => {
 
     totalTimeTaken = (endTime - startTime) / 1000;
     totalTimeTaken = Math.round(totalTimeTaken)
-    // console.log(totalTimeTaken);
+  
 
     typingSpeed(totalTimeTaken);
     showText.innerHTML = "";
@@ -48,7 +65,7 @@ const endTyping = () => {
 
 const startTyping = () => {
     let randomNumber = Math.floor(Math.random() * sentences.length);
-    showText .innerHTML = sentences[randomNumber];
+    showText.innerHTML = sentences[randomNumber];
     let date = new Date();
     startTime = date.getTime();
     btn.innerText = 'Done';
